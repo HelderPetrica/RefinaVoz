@@ -1,0 +1,121 @@
+{
+  "version": "2026-04-25-lite",
+  "source_note": "Destilado lite inspirado no AutoJuris: metodo cognitivo, nao conteudo legal congelado.",
+  "core_principles": [
+    "Identificar cliente, partes e papel processual antes de sugerir resposta.",
+    "Separar fatos narrados, documentos existentes, duvidas e hipoteses juridicas.",
+    "Preferir perguntas criticas quando a fala estiver incompleta.",
+    "Nao fazer afirmacao juridica categorica sem fonte ou revisao humana.",
+    "Preservar rastreabilidade: indicar quais informacoes vieram da fala e quais sao inferencias."
+  ],
+  "global_guardrails": [
+    "Nao prometer resultado ao cliente.",
+    "Nao inventar numero de processo, artigo, tribunal, precedente ou prazo.",
+    "Quando houver lacuna de fato, listar a pendencia em vez de preencher por suposicao.",
+    "Em comunicacao com cliente, usar linguagem clara e profissional.",
+    "Em marketing juridico, manter tom educativo e evitar captacao agressiva ou garantia de sucesso."
+  ],
+  "domains": [
+    {
+      "id": "previdenciario",
+      "label": "Direito Previdenciario",
+      "keywords": ["inss", "beneficio", "aposentadoria", "bpc", "loas", "auxilio", "incapacidade", "pericia", "der", "cnis", "ppp", "segurado", "indeferimento", "revisao"],
+      "search_terms": ["DER", "CNIS", "qualidade de segurado", "carencia", "incapacidade laborativa", "processo administrativo previdenciario", "prova material"],
+      "critical_questions": [
+        "Qual beneficio foi pedido ou discutido?",
+        "Qual e a DER e a data do indeferimento?",
+        "Ha CNIS, laudos, PPP ou documentos medicos?",
+        "O caso esta na via administrativa ou judicial?"
+      ],
+      "subareas": [
+        {"id": "incapacidade", "label": "Beneficios por incapacidade", "keywords": ["auxilio-doenca", "auxilio doença", "auxilio por incapacidade", "aposentadoria por invalidez", "laudo", "pericia", "cid"]},
+        {"id": "assistencial", "label": "BPC/LOAS", "keywords": ["bpc", "loas", "deficiencia", "idoso", "miserabilidade", "cadunico", "renda familiar"]},
+        {"id": "aposentadorias", "label": "Aposentadorias", "keywords": ["tempo de contribuicao", "especial", "idade", "rural", "ppp", "atividade especial"]}
+      ]
+    },
+    {
+      "id": "trabalhista",
+      "label": "Direito do Trabalho",
+      "keywords": ["empregado", "empresa", "ctps", "vinculo", "horas extras", "rescisao", "fgts", "justa causa", "adicional", "insalubridade", "periculosidade", "assédio", "acidente de trabalho"],
+      "search_terms": ["vinculo empregaticio", "jornada", "verbas rescisorias", "prova testemunhal", "controle de ponto", "onus da prova"],
+      "critical_questions": [
+        "Qual periodo trabalhado e funcao exercida?",
+        "Havia registro em CTPS ou contrato informal?",
+        "Quais verbas ou condutas estao em disputa?",
+        "Existem controles de ponto, recibos, mensagens ou testemunhas?"
+      ],
+      "subareas": [
+        {"id": "jornada", "label": "Jornada e horas extras", "keywords": ["jornada", "banco de horas", "intervalo", "sobreaviso", "ponto"]},
+        {"id": "rescisao", "label": "Rescisao e verbas", "keywords": ["rescisao", "aviso previo", "multa", "fgts", "ferias", "decimo terceiro"]},
+        {"id": "dano", "label": "Dano moral trabalhista", "keywords": ["assedio", "humilhacao", "discriminacao", "perseguicao", "ofensa"]}
+      ]
+    },
+    {
+      "id": "consumidor",
+      "label": "Direito do Consumidor",
+      "keywords": ["consumidor", "cobranca", "negativacao", "spc", "serasa", "produto", "defeito", "servico", "banco", "cartao", "plano de saude", "cancelamento", "reembolso"],
+      "search_terms": ["relacao de consumo", "inversao do onus da prova", "cobranca indevida", "dano moral", "falha na prestacao do servico"],
+      "critical_questions": [
+        "Qual produto ou servico gerou o problema?",
+        "Ha contrato, comprovante, protocolo ou conversa registrada?",
+        "O consumidor sofreu negativacao, corte de servico ou prejuizo financeiro?",
+        "Qual solucao ja foi tentada administrativamente?"
+      ],
+      "subareas": [
+        {"id": "negativacao", "label": "Negativacao/cobranca", "keywords": ["negativacao", "serasa", "spc", "cobranca indevida", "protesto"]},
+        {"id": "bancario", "label": "Bancario de consumo", "keywords": ["banco", "cartao", "emprestimo", "pix", "fraude", "tarifa"]},
+        {"id": "saude", "label": "Plano de saude", "keywords": ["plano de saude", "operadora", "tratamento", "cirurgia", "negativa"]}
+      ]
+    },
+    {
+      "id": "familia",
+      "label": "Familia e Sucessoes",
+      "keywords": ["alimentos", "pensao", "guarda", "visita", "divorcio", "uniao estavel", "inventario", "partilha", "heranca", "curatela"],
+      "search_terms": ["melhor interesse da crianca", "binomio necessidade possibilidade", "guarda compartilhada", "partilha de bens", "inventario"],
+      "critical_questions": [
+        "Quem sao as partes e qual e o vinculo familiar?",
+        "Ha acordo anterior, decisao judicial ou medida urgente?",
+        "Existem criancas, dependentes ou bens a partilhar?",
+        "Qual prova documental ja existe?"
+      ],
+      "subareas": [
+        {"id": "alimentos", "label": "Alimentos", "keywords": ["pensao", "alimentos", "necessidade", "possibilidade", "execucao"]},
+        {"id": "guarda", "label": "Guarda e convivencia", "keywords": ["guarda", "visita", "convivencia", "alienacao parental"]},
+        {"id": "inventario", "label": "Inventario", "keywords": ["inventario", "heranca", "partilha", "espólio", "espolio"]}
+      ]
+    },
+    {
+      "id": "processual",
+      "label": "Processo e Estrategia",
+      "keywords": ["prazo", "intimacao", "sentenca", "decisao", "recurso", "contestacao", "impugnacao", "audiencia", "tutela", "liminar", "execucao", "embargos", "agravo"],
+      "search_terms": ["ultimo ato relevante", "contraditorio", "prazo processual", "adequacao da peca", "risco de preclusao"],
+      "critical_questions": [
+        "Qual foi o ultimo ato juridicamente relevante?",
+        "Quem se manifestou por ultimo e contra quem?",
+        "Existe prazo aberto ou risco de preclusao?",
+        "A resposta esperada e informativa, defensiva, recursal ou executiva?"
+      ],
+      "subareas": [
+        {"id": "recursal", "label": "Recursos", "keywords": ["apelacao", "agravo", "recurso", "embargos", "contrarrazoes"]},
+        {"id": "tutela", "label": "Tutela de urgencia", "keywords": ["liminar", "urgencia", "perigo", "probabilidade", "tutela"]},
+        {"id": "audiencia", "label": "Audiencia", "keywords": ["audiencia", "testemunha", "depoimento", "conciliacao", "instrucao"]}
+      ]
+    },
+    {
+      "id": "marketing_juridico",
+      "label": "Marketing Juridico Etico",
+      "keywords": ["post", "linkedin", "instagram", "conteudo", "marketing", "captacao", "cliente", "copy", "roteiro", "video", "educativo"],
+      "search_terms": ["marketing juridico etico", "conteudo educativo", "linguagem acessivel", "sem promessa de resultado", "autoridade profissional"],
+      "critical_questions": [
+        "O texto e educativo ou promocional demais?",
+        "Ha promessa de resultado ou inducao indevida?",
+        "Qual publico precisa entender o tema?",
+        "Qual acao segura o leitor deve tomar?"
+      ],
+      "subareas": [
+        {"id": "conteudo_educativo", "label": "Conteudo educativo", "keywords": ["explicar", "educar", "orientar", "duvida", "post"]},
+        {"id": "atendimento_comercial", "label": "Atendimento comercial", "keywords": ["lead", "cliente", "consulta", "orcamento", "honorarios"]}
+      ]
+    }
+  ]
+}

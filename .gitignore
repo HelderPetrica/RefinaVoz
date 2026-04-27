@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+*.class
+venv/
+.venv/
+.env
+
+# Node/React
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# Rust/Tauri
+src-tauri/target/
+**/*.rs.bk
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Logs & DBs
+*.log
+*.sqlite
+*.db

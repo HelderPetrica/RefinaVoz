@@ -1,0 +1,21 @@
+{
+  "global": {
+    "esquilos": "skills",
+    "reack": "react",
+    "taure": "tauri",
+    "jeminí": "Gemini",
+    "gemíni": "Gemini",
+    "fasta pi": "FastAPI",
+    "fast api": "FastAPI"
+  },
+  "programacao": {
+    "nó jésse": "Node.js",
+    "node jésse": "Node.js",
+    "githabi": "GitHub",
+    "git habi": "GitHub",
+    "páiton": "Python",
+    "bscode": "VS Code",
+    "codel": "VS Code"
+  },
+  "comunicacao": {}
+}

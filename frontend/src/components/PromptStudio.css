@@ -1,0 +1,303 @@
+/**
+ * PromptStudio.css — Estilos premium com glassmorphism e micro-animações.
+ */
+
+/* ─── Overlay ─── */
+.prompt-studio-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.6);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease;
+}
+
+/* ─── Container Principal ─── */
+.prompt-studio {
+  background: rgba(20, 20, 30, 0.95);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6), 0 0 1px rgba(255, 255, 255, 0.1);
+  width: 380px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 20px;
+  animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Header ─── */
+.ps-header {
+  margin-bottom: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding-bottom: 12px;
+}
+
+.ps-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ps-title-icon {
+  font-size: 20px;
+}
+
+.ps-subtitle {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.5);
+  margin-top: 4px;
+  line-height: 1.4;
+}
+
+/* ─── Grid de Cards ─── */
+.ps-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.ps-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.ps-card:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(99, 102, 241, 0.3);
+  transform: translateX(2px);
+}
+
+.ps-card-active {
+  border-color: rgba(99, 102, 241, 0.5);
+  background: rgba(99, 102, 241, 0.08);
+}
+
+.ps-card-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+}
+
+.ps-card-icon-vibe-code { background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); }
+.ps-card-icon-normal { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
+.ps-card-icon-profissional { background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); }
+.ps-card-icon-programador { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
+.ps-card-icon-mensagem { background: linear-gradient(135deg, #ec4899 0%, #db2777 100%); }
+.ps-card-icon-prompt { background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); }
+
+.ps-card-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.ps-card-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: #fff;
+  text-transform: capitalize;
+  margin: 0;
+}
+
+.ps-card-desc {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.45);
+  margin: 2px 0 0 0;
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.ps-card-use {
+  padding: 4px 10px;
+  font-size: 10px;
+  font-weight: 600;
+  border-radius: 6px;
+  border: 1px solid rgba(99, 102, 241, 0.4);
+  background: transparent;
+  color: #818cf8;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.ps-card-use:hover {
+  background: rgba(99, 102, 241, 0.15);
+}
+
+.ps-card-use-active {
+  background: rgba(99, 102, 241, 0.2);
+  color: #a5b4fc;
+  border-color: rgba(99, 102, 241, 0.6);
+}
+
+/* ─── Detalhe do Prompt ─── */
+.ps-detail {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 12px;
+  animation: fadeIn 0.3s ease;
+}
+
+.ps-detail-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.ps-detail-icon {
+  font-size: 24px;
+}
+
+.ps-detail-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+}
+
+.ps-detail-desc {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 2px 0 0 0;
+}
+
+.ps-detail-section {
+  margin-top: 10px;
+}
+
+.ps-detail-section h4 {
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0 0 6px 0;
+}
+
+.ps-persona-text {
+  font-size: 10px;
+  color: rgba(168, 85, 247, 0.9);
+  line-height: 1.5;
+  font-style: italic;
+  margin: 0;
+  padding: 6px 8px;
+  background: rgba(168, 85, 247, 0.06);
+  border-radius: 6px;
+  border-left: 2px solid rgba(168, 85, 247, 0.3);
+}
+
+.ps-rules-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.ps-rules-list li {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.4;
+  padding: 3px 0 3px 12px;
+  position: relative;
+}
+
+.ps-rules-list li::before {
+  content: "▸";
+  position: absolute;
+  left: 0;
+  color: rgba(99, 102, 241, 0.6);
+}
+
+.ps-detail-use-btn {
+  width: 100%;
+  margin-top: 10px;
+  padding: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 8px;
+  border: none;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: capitalize;
+}
+
+.ps-detail-use-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+}
+
+/* ─── Loading ─── */
+.ps-loading {
+  text-align: center;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.4);
+  padding: 12px;
+}
+
+/* ─── Close ─── */
+.ps-close-btn {
+  width: 100%;
+  padding: 8px;
+  font-size: 11px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+  color: rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.ps-close-btn:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* ─── Scrollbar custom ─── */
+.prompt-studio::-webkit-scrollbar {
+  width: 4px;
+}
+
+.prompt-studio::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.prompt-studio::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+}
