@@ -42,9 +42,16 @@ echo.
 
 echo [4/4] Verificando variaveis de ambiente...
 if not exist ".env" (
-    echo Criando arquivo .env de exemplo...
-    echo GEMINI_API_KEY=sua_chave_aqui > .env
-    echo [AVISO] Arquivo .env criado. Nao esqueca de editar e colocar sua GEMINI_API_KEY.
+    echo Criando arquivo .env a partir do modelo publico...
+    if exist ".env.example" (
+        copy /Y ".env.example" ".env" >nul
+    ) else (
+        (
+            echo GEMINI_API_KEYS=sua_chave_aqui
+            echo USE_MOCK_LLM=false
+        ) > .env
+    )
+    echo [AVISO] Arquivo .env criado. Nao esqueca de editar e colocar sua GEMINI_API_KEYS.
 ) else (
     echo [OK] Arquivo .env ja existe.
 )

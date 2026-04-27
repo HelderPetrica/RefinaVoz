@@ -7,6 +7,10 @@
 
 Assistente multimodal de voz para desktop, com captura de contexto visual, proteção semântica por dicionário local e refinamento textual com Gemini Flash e Gemini Lite.
 
+<p align="center">
+	<img src="frontend/src-tauri/icons/icon.png" alt="RefinaVoz icon" width="160">
+</p>
+
 ## O que é
 
 O RefinaVoz nasceu como um filtro de fala para ditado inteligente e evoluiu para um sistema local-first de produção textual assistida por IA. A proposta não é apenas transcrever áudio, mas interpretar o contexto de uso, preservar termos críticos do domínio do usuário e devolver um texto mais útil para o ambiente em que ele está trabalhando.
@@ -18,6 +22,12 @@ Na prática, o projeto combina frontend em React, ponte nativa em Tauri/Rust e e
 - Profissionais que escrevem muito e não podem perder precisão terminológica.
 - Usuários de fluxos jurídicos, técnicos, clínicos ou operacionais com vocabulário próprio.
 - Desenvolvedores interessados em interfaces agentic, apps desktop local-first e integração multimodal sem frameworks pesados.
+
+## Visual e demonstração
+
+- Referência visual atual: ícone oficial do app embutido no repositório.
+- Screenshot funcional da interface: pendente da primeira captura pública com layout estabilizado.
+- GIF de uso fim a fim: pendente da primeira release empacotada para evitar documentação visual desatualizada.
 
 ## Principais capacidades
 
@@ -62,8 +72,8 @@ Na prática, o projeto combina frontend em React, ponte nativa em Tauri/Rust e e
 ### Ainda não formalizado
 
 - Pipeline completo de CI/CD público.
-- Política de contribuição formal.
-- Arquivo de licença definitivo para distribuição ampla.
+- Build empacotado com instalador distribuível.
+- Material visual definitivo de demonstração pública.
 
 ## Quick Start no Windows
 
@@ -80,7 +90,7 @@ O onboarding atual está otimizado para Windows.
 
 1. Clone o repositório.
 2. Execute `setup.bat` na raiz do projeto.
-3. Configure sua chave do Gemini no arquivo `.env`.
+3. Configure suas chaves do Gemini no arquivo `.env`.
 4. Execute `abrir_filtro_de_fala.bat` para subir frontend e backend.
 
 O script `setup.bat` cria o ambiente virtual Python, instala as dependências do backend e do frontend e cria um `.env` mínimo se ele ainda não existir.
@@ -91,12 +101,14 @@ O repositório público usa `.env.example` como modelo seguro. O arquivo `.env` 
 
 1. Gere sua chave em https://aistudio.google.com/app/apikey.
 2. Copie `.env.example` para `.env`, se preferir começar do template público.
-3. Preencha `GEMINI_API_KEY` com a sua chave.
+3. Preencha `GEMINI_API_KEYS` com uma ou mais chaves separadas por vírgula.
+4. Se quiser validar a interface sem consumir tokens reais, defina `USE_MOCK_LLM=true`.
 
 Exemplo:
 
 ```env
-GEMINI_API_KEY=coloque_sua_chave_aqui
+GEMINI_API_KEYS=coloque_sua_chave_aqui
+USE_MOCK_LLM=false
 ```
 
 ## Execução manual
@@ -134,7 +146,7 @@ Passos:
 1. Leia README.md e docs/OPEN_SOURCE_OVERVIEW.md.
 2. Execute setup.bat na raiz do repositório.
 3. Se o arquivo .env não existir, crie-o a partir de .env.example.
-4. Solicite ao usuário a GEMINI_API_KEY e preencha o .env.
+4. Solicite ao usuário a GEMINI_API_KEYS e preencha o .env.
 5. Inicie a aplicação com abrir_filtro_de_fala.bat.
 6. Valide se o backend está respondendo na porta 14201.
 ```
@@ -156,6 +168,8 @@ testes/         Testes automatizados
 - [Visão geral do projeto](docs/OPEN_SOURCE_OVERVIEW.md)
 - [Guia de arquitetura interna](docs/GUIA_ARQUITETURA_INTERNA.md)
 - [Plano pendente da arquitetura multiagente](PLANOS/ARQUITETURA_MULTI_AGENTE_PENDENTE.md)
+- [Troubleshooting](docs/TROUBLESHOOTING.md)
+- [Guia de contribuição](CONTRIBUTING.md)
 
 ## Observações de uso
 
@@ -163,6 +177,18 @@ testes/         Testes automatizados
 - Elementos locais como dicionário e histórico permanecem no ambiente do usuário.
 - O launcher atual foi pensado para desenvolvimento e testes locais antes da etapa de empacotamento final.
 
+## Troubleshooting rápido
+
+- Backend não sobe: verifique se a porta `14201` já está em uso e valide `http://127.0.0.1:14201/api/v1/health`.
+- Frontend não abre: confirme se a porta `1420` está livre e se o Node.js está instalado.
+- Erro de chave Gemini: revise se o arquivo `.env` usa `GEMINI_API_KEYS` e não `GEMINI_API_KEY`.
+- Falha de build do Tauri: confirme se Rust e Microsoft C++ Build Tools / MSVC estão instalados.
+- Para um guia detalhado de incidentes comuns, consulte [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md).
+
 ## Contribuição
 
 O repositório está em fase de organização para colaboração aberta. Issues, sugestões de arquitetura, melhorias de onboarding e testes são especialmente úteis neste estágio.
+
+## Licença
+
+Este projeto está licenciado sob a [MIT License](LICENSE).

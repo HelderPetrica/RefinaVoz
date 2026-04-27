@@ -58,7 +58,7 @@ Se você é desenvolvedor Python (FastAPI), Rust (Tauri) ou React moderno, o Ref
 
 1. Certifique-se de ter Python 3.11+, Node.js e Rust instanciados (MSVC Build Tools no Windows).
 2. Clone o repo, inicie via `abrir_filtro_de_fala.bat`.
-3. Adicione sua chave `GEMINI_API_KEY` num `.env`.
+3. Adicione sua chave `GEMINI_API_KEYS` num `.env`.
 4. Divirta-se refatorando!
 
 ---
