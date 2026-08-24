@@ -14,7 +14,6 @@ SUPPORTED_AUDIO_MIME_TYPES = {
     "audio/ogg",
     "audio/flac",
 }
-MAX_INLINE_AUDIO_BYTES = 20 * 1024 * 1024
 
 
 def _normalize_audio_mime_type(mime_type: str | None) -> str:
@@ -38,8 +37,9 @@ async def transcribe_audio_with_gemini(audio_bytes: bytes, mime_type: str | None
             "Use WAV, MP3, AIFF, AAC, OGG ou FLAC."
         )
 
-    if len(audio_bytes) > MAX_INLINE_AUDIO_BYTES:
-        raise ValueError("Áudio excede 20 MB; reduza a gravação antes de transcrever.")
+    if len(audio_bytes) > settings.MAX_AUDIO_UPLOAD_BYTES:
+        max_megabytes = settings.MAX_AUDIO_UPLOAD_BYTES // (1024 * 1024)
+        raise ValueError(f"Áudio excede {max_megabytes} MB; reduza a gravação antes de transcrever.")
 
     api_key = _pick_api_key()
     prompt = "Transcreva o áudio em português brasileiro com alta precisão. Retorne apenas a transcrição."

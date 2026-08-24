@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 import os
 
 from backend.api.router import router as api_router
+from backend.api.live_websocket import live_router
 from backend.core.logger import logger
 
 # Garante carregamento do .env nativo da raiz do app
@@ -29,6 +30,7 @@ app.add_middleware(
 )
 
 app.include_router(api_router, prefix="/api/v1")
+app.include_router(live_router, prefix="/api/v1")
 
 if __name__ == "__main__":
     logger.info("Iniciando RefinaVoz Backend SOTA (State of the Art)...")

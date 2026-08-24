@@ -6,6 +6,7 @@
  */
 
 const API_BASE = "http://localhost:14201/api/v1";
+const REQUEST_TIMEOUT_MS = 60_000;
 
 // ─── Tipos espelhando backend/schemas/models.py ───
 
@@ -23,6 +24,21 @@ export interface ProcessResponse {
   mode_used: string;
   applied_dictionary_terms: string[];
   metrics: ProcessingMetrics;
+  audio_optimization?: {
+    mode: string;
+    enabled: boolean;
+    audio_changed: boolean;
+    original_size_bytes: number;
+    optimized_size_bytes?: number | null;
+    speed_factor?: number | null;
+    mime_type: string;
+    sensitive_mode: boolean;
+    decision: string;
+    reason?: string | null;
+    transcription_ms?: number | null;
+    total_endpoint_ms?: number | null;
+    fallback_used: boolean;
+  };
 }
 
 export interface PromptModeList {
@@ -47,6 +63,7 @@ export interface DiagnosticsStatus {
   model_default: string;
   model_fallback: string;
   audio_model?: string;
+  audio_optimization?: Record<string, unknown>;
   configured_keys: number;
   modes_loaded: Record<string, string>;
   hooks: Record<string, string[]>;
@@ -84,7 +101,7 @@ export async function processText(
     formData.append("visual_context_image", visualContextImage, getImageFilename(visualContextImage.type));
   }
 
-  const response = await fetch(`${API_BASE}/process/texto`, {
+  const response = await fetchWithTimeout(`${API_BASE}/process/texto`, {
     method: "POST",
     body: formData,
   });
@@ -113,10 +130,10 @@ export async function processAudio(
     formData.append("visual_context_image", visualContextImage, getImageFilename(visualContextImage.type));
   }
 
-  const response = await fetch(`${API_BASE}/process/audio`, {
+  const response = await fetchWithTimeout(`${API_BASE}/process/audio`, {
     method: "POST",
     body: formData,
-  });
+  }, REQUEST_TIMEOUT_MS);
 
   if (!response.ok) {
     throw new Error(`Erro HTTP: ${response.status}`);
@@ -200,4 +217,27 @@ export async function getHistory(): Promise<HistoryEntry[]> {
 export async function clearHistory(): Promise<void> {
   const response = await fetch(`${API_BASE}/history`, { method: "DELETE" });
   if (!response.ok) throw new Error(`Erro HTTP: ${response.status}`);
+}
+
+async function fetchWithTimeout(
+  input: RequestInfo | URL,
+  init: RequestInit,
+  timeoutMs = REQUEST_TIMEOUT_MS,
+): Promise<Response> {
+  const controller = new AbortController();
+  const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    return await fetch(input, {
+      ...init,
+      signal: controller.signal,
+    });
+  } catch (error) {
+    if (error instanceof DOMException && error.name === "AbortError") {
+      throw new Error("Tempo limite excedido ao comunicar com o backend.");
+    }
+    throw error;
+  } finally {
+    window.clearTimeout(timeoutId);
+  }
 }

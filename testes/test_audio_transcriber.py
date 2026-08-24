@@ -58,3 +58,16 @@ async def test_transcribe_audio_uses_google_genai_sdk(monkeypatch):
 async def test_transcribe_audio_rejects_webm_before_external_call():
     with pytest.raises(ValueError, match="Formato de áudio não suportado"):
         await audio_transcriber.transcribe_audio_with_gemini(b"webm bytes", "audio/webm")
+
+
+@pytest.mark.asyncio
+async def test_max_audio_upload_bytes_from_config(monkeypatch):
+    original_limit = settings.MAX_AUDIO_UPLOAD_BYTES
+
+    monkeypatch.setattr(settings, "MAX_AUDIO_UPLOAD_BYTES", 4)
+
+    try:
+        with pytest.raises(ValueError, match="Áudio excede"):
+            await audio_transcriber.transcribe_audio_with_gemini(b"12345", "audio/wav")
+    finally:
+        settings.MAX_AUDIO_UPLOAD_BYTES = original_limit

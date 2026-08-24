@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./DictionaryEditor.css";
+import { logger } from "../services/logger";
 
 interface DictionaryEditorProps {
   visible: boolean;
@@ -23,7 +24,7 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
       const data = await res.json();
       setDictionary(data);
     } catch (err) {
-      console.error(err);
+      logger.warn("dictionary.load.error", err);
     } finally {
       setLoading(false);
     }
@@ -54,7 +55,7 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
       setRight("");
       loadDictionary();
     } catch (err) {
-      console.error(err);
+      logger.warn("dictionary.add.error", err);
     }
   };
 
@@ -65,7 +66,7 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
       });
       loadDictionary();
     } catch (err) {
-      console.error(err);
+      logger.warn("dictionary.remove.error", err);
     }
   };
 

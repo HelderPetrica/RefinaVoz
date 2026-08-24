@@ -1,25 +1,43 @@
+# Environment & Secrets (NUNCA COMMITAR)
+.env
+.env*.local
+!.env.example
+
 # Python
 __pycache__/
 *.py[cod]
-*.class
+*$py.class
 venv/
 .venv/
-.env
+.pytest_cache/
+.coverage
+htmlcov/
+*-freeze.txt
+check_git.py
 
 # Node/React
+node_modules/
 frontend/node_modules/
 frontend/dist/
 frontend/.vite/
+*.tsbuildinfo
 
 # Rust/Tauri
 src-tauri/target/
+frontend/src-tauri/target/
 **/*.rs.bk
 
-# OS Files
+# OS & Executables
 .DS_Store
 Thumbs.db
+*.exe
+*.dll
+*.so
+*.dylib
 
 # Logs & DBs
 *.log
 *.sqlite
 *.db
+!data/
+

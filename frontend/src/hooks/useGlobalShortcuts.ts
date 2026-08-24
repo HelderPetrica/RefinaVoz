@@ -6,6 +6,7 @@
  */
 import { useEffect, useRef } from "react";
 import { isTauri } from "@tauri-apps/api/core";
+import { getCurrentWindow } from "@tauri-apps/api/window";
 import { register, unregisterAll } from "@tauri-apps/plugin-global-shortcut";
 import { logger } from "../services/logger";
 
@@ -21,6 +22,11 @@ export function useGlobalShortcuts(
   useEffect(() => {
     if (!isTauri()) {
       logger.debug("shortcuts.skip.nonTauriRuntime");
+      return;
+    }
+
+    if (getCurrentWindow().label !== "main") {
+      logger.debug("shortcuts.skip.secondaryWindow");
       return;
     }
 

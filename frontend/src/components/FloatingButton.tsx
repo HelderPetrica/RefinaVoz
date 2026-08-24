@@ -7,12 +7,16 @@
  *  - X                → esconde no tray
  *  - i                → status rápido
  *  - Histórico        → abre histórico
- *  - Grip             → arrasta a janela
  */
 
-import React, { useRef } from "react";
-import { isTauri } from "@tauri-apps/api/core";
-import { getCurrentWindow } from "@tauri-apps/api/window";
+import React from "react";
+import {
+  DEFAULT_MASCOT_CONFIG,
+  MascotCharacterVisual,
+  resolveCharacterSize,
+  type MascotConfig,
+  type MascotVisualState,
+} from "./MascotOrb";
 
 interface FloatingButtonProps {
   isRecording: boolean;
@@ -26,6 +30,8 @@ interface FloatingButtonProps {
   onOpenSettings: () => void;
   onOpenStatus: () => void;
   onOpenHistory: () => void;
+  onOpenDictionary: () => void;
+  onDuplicateAssistant: () => void | Promise<void>;
   onHideWidget: () => void;
   title?: string;
   mode?: string;
@@ -35,6 +41,9 @@ interface FloatingButtonProps {
   historyAvailable?: boolean;
   visualContextActive?: boolean;
   visualContextLoading?: boolean;
+  hasError?: boolean;
+  toolsOpen?: boolean;
+  mascotConfig?: MascotConfig;
 }
 
 const MicIcon: React.FC = () => (
@@ -53,8 +62,9 @@ const StopIcon: React.FC = () => (
 );
 
 const SettingsIcon: React.FC = () => (
-  <svg className="icon-small" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <path d="M19.14 12.94a7.97 7.97 0 0 0 0-1.88l2.03-1.58a.5.5 0 0 0 .12-.64l-1.92-3.32a.5.5 0 0 0-.6-.22l-2.39.96a7.99 7.99 0 0 0-1.62-.94l-.36-2.54a.5.5 0 0 0-.5-.42h-3.84a.5.5 0 0 0-.5.42l-.36 2.54c-.59.24-1.13.55-1.62.94l-2.39-.96a.5.5 0 0 0-.6.22L2.71 8.84a.5.5 0 0 0 .12.64l2.03 1.58a7.97 7.97 0 0 0 0 1.88l-2.03 1.58a.5.5 0 0 0-.12.64l1.92 3.32c.14.24.42.34.6.22l2.39-.96c.49.39 1.03.7 1.62.94l.36 2.54c.06.25.27.42.5.42h3.84c.23 0 .44-.17.5-.42l.36-2.54c.59-.24 1.13-.55 1.62-.94l2.39.96c.18.12.46.02.6-.22l1.92-3.32a.5.5 0 0 0-.12-.64l-2.03-1.58zM12 15.5A3.5 3.5 0 1 1 12 8.5a3.5 3.5 0 0 1 0 7z" />
+  <svg className="icon-small icon-stroke control-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path d="M12 8.2a3.8 3.8 0 1 0 0 7.6 3.8 3.8 0 0 0 0-7.6Z" />
+    <path d="M18.2 8.6 19.7 7l-2.1-2.8-2 .9a7.5 7.5 0 0 0-1.7-.7L13.5 2h-3l-.4 2.4c-.6.2-1.2.4-1.7.7l-2-.9L4.3 7l1.5 1.6c-.2.5-.3 1.1-.3 1.7L3.5 11v2l2 .7c.1.6.2 1.2.5 1.7L4.5 17l2 2.8 2-.9c.5.3 1.1.5 1.7.7l.4 2.4h3l.4-2.4c.6-.2 1.2-.4 1.7-.7l2 .9 2-2.8-1.5-1.6c.2-.5.4-1.1.5-1.7l1.9-.7v-2l-1.9-.7c-.1-.6-.3-1.2-.5-1.7Z" />
   </svg>
 );
 
@@ -66,50 +76,82 @@ const ProcessingIcon: React.FC = () => (
   </svg>
 );
 
+const CheckIcon: React.FC = () => (
+  <svg className="icon icon-stroke" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path d="M5 12.5l4.4 4.4L19 7" />
+  </svg>
+);
+
+const AlertIcon: React.FC = () => (
+  <svg className="icon icon-stroke" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path d="M12 8v5" />
+    <path d="M12 17h.01" />
+    <path d="M10.3 3.9 2.8 17a2 2 0 0 0 1.7 3h15a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" />
+  </svg>
+);
+
 const HistoryIcon: React.FC = () => (
-  <svg className="icon-small icon-stroke" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-    <path d="M4 5.5h16" />
-    <path d="M4 12h11" />
-    <path d="M4 18.5h7" />
-    <path d="M17 14v4h3" />
-    <path d="M21 18a4 4 0 1 1-1.17-2.83" />
+  <svg className="icon-small icon-stroke control-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path d="M4.5 5.5h11" />
+    <path d="M4.5 10.5h8.5" />
+    <path d="M4.5 15.5h5.5" />
+    <path d="M17 13.5v4h3.2" />
+    <path d="M21 17.6a4.4 4.4 0 1 1-1.3-3.1" />
+    <path d="M21 13.8v3.2h-3.2" />
+  </svg>
+);
+
+const DictionaryIcon: React.FC = () => (
+  <svg className="icon-small icon-stroke control-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path d="M5.5 4.5h8.2A3.8 3.8 0 0 1 17.5 8.3v11.2H8.2a2.7 2.7 0 0 1-2.7-2.7V4.5Z" />
+    <path d="M8.5 8h5.4" />
+    <path d="M8.5 11.3h4.2" />
+    <path d="M17.5 8.5h1.2a2 2 0 0 1 2 2v9H17.5" />
+    <path d="M8.7 16.2h5.8" />
+  </svg>
+);
+
+const DuplicateIcon: React.FC = () => (
+  <svg className="icon-small icon-stroke control-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <rect x="8" y="8" width="10" height="10" rx="2.4" />
+    <path d="M6 14H5.8A2.8 2.8 0 0 1 3 11.2V5.8A2.8 2.8 0 0 1 5.8 3h5.4A2.8 2.8 0 0 1 14 5.8V6" />
+    <path d="M13 11.2v3.6" />
+    <path d="M11.2 13h3.6" />
   </svg>
 );
 
 const CopyIcon: React.FC = () => (
-  <svg className="icon-small icon-stroke" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-    <rect x="9" y="9" width="10" height="10" rx="2" />
-    <path d="M7 15H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v1" />
+  <svg className="icon-small icon-stroke control-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <rect x="9" y="8.5" width="10.5" height="10.5" rx="2.2" />
+    <path d="M6.5 15.5H6a2 2 0 0 1-2-2V6.2a2 2 0 0 1 2-2h7.3a2 2 0 0 1 2 2v.5" />
+    <path d="M12 12h4.4" />
+    <path d="M12 15.4h3" />
   </svg>
 );
 
 const FrameIcon: React.FC = () => (
-  <svg className="icon-small icon-stroke" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-    <path d="M8 4H6a2 2 0 0 0-2 2v2" />
-    <path d="M16 4h2a2 2 0 0 1 2 2v2" />
-    <path d="M20 16v2a2 2 0 0 1-2 2h-2" />
-    <path d="M4 16v2a2 2 0 0 0 2 2h2" />
-    <circle cx="12" cy="12" r="2.4" />
+  <svg className="icon-small icon-stroke control-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <rect x="4" y="5" width="16" height="13.5" rx="2.6" />
+    <path d="M7.5 8.5h3.2" />
+    <path d="M16.3 8.5h.2" />
+    <path d="m5.7 16 3.5-3.4 2.7 2.4 2-1.9 4.4 3.9" />
+    <circle cx="15.7" cy="10.4" r="1.45" />
   </svg>
 );
 
 const InfoIcon: React.FC = () => (
-  <svg className="icon-small" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <path d="M11 10h2v7h-2v-7Zm0-3h2v2h-2V7Z" />
-    <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm0 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16Z" />
+  <svg className="icon-small icon-stroke control-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <circle cx="12" cy="12" r="8.5" />
+    <path d="M12 11v5" />
+    <path d="M12 8h.01" />
   </svg>
 );
 
 const CloseIcon: React.FC = () => (
-  <svg className="icon-small" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <path d="m6.4 5 12.6 12.6-1.4 1.4L5 6.4 6.4 5Z" />
-    <path d="M17.6 5 19 6.4 6.4 19 5 17.6 17.6 5Z" />
-  </svg>
-);
-
-const GripIcon: React.FC = () => (
-  <svg className="icon-small" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <path d="M9 5h2v2H9V5Zm4 0h2v2h-2V5ZM9 11h2v2H9v-2Zm4 0h2v2h-2v-2ZM9 17h2v2H9v-2Zm4 0h2v2h-2v-2Z" />
+  <svg className="icon-small icon-stroke control-icon control-icon-danger" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <circle cx="12" cy="12" r="8.4" />
+    <path d="m8.5 8.5 7 7" />
+    <path d="m15.5 8.5-7 7" />
   </svg>
 );
 
@@ -125,6 +167,8 @@ export const FloatingButton: React.FC<FloatingButtonProps> = ({
   onOpenSettings,
   onOpenStatus,
   onOpenHistory,
+  onOpenDictionary,
+  onDuplicateAssistant,
   onHideWidget,
   title,
   mode = "normal",
@@ -134,16 +178,24 @@ export const FloatingButton: React.FC<FloatingButtonProps> = ({
   historyAvailable = false,
   visualContextActive = false,
   visualContextLoading = false,
+  hasError = false,
+  toolsOpen = false,
+  mascotConfig = DEFAULT_MASCOT_CONFIG,
 }) => {
-  const dragTimerRef = useRef<number | null>(null);
-  const suppressClickRef = useRef(false);
-
   const buttonClassName = [
     "main-button",
     isRecording ? "recording" : "",
     loading ? "processing" : "",
     wasSuccessful ? "success" : "",
+    hasError ? "error" : "",
+    mascotConfig.character !== "app_button" ? "mascot-orb-button" : "",
     `mode-${mode}`,
+  ]
+    .filter(Boolean)
+    .join(" ");
+  const anchorClassName = [
+    "bubble-anchor",
+    mascotConfig.character !== "app_button" ? "mascot-anchor" : "",
   ]
     .filter(Boolean)
     .join(" ");
@@ -155,49 +207,32 @@ export const FloatingButton: React.FC<FloatingButtonProps> = ({
       : "Clique para gravar · botão direito abre o menu · Alt+Space");
 
   const buttonLabel = loading ? "Processando áudio" : isRecording ? "Parar gravação" : "Iniciar gravação";
-  const buttonIcon = loading ? <ProcessingIcon /> : isRecording ? <StopIcon /> : <MicIcon />;
+  const visualState: MascotVisualState = hasError
+    ? "error"
+    : visualContextLoading
+      ? "capturing_context"
+      : loading
+        ? "thinking"
+        : wasSuccessful
+          ? "success"
+          : isRecording
+            ? "listening"
+            : toolsOpen
+              ? "tools_open"
+              : "idle";
+  const buttonIcon = mascotConfig.character === "app_button"
+    ? hasError ? <AlertIcon /> : loading ? <ProcessingIcon /> : wasSuccessful ? <CheckIcon /> : isRecording ? <StopIcon /> : <MicIcon />
+    : <MascotCharacterVisual character={mascotConfig.character} state={visualState} variant={mascotConfig.variant} />;
+  const size = resolveCharacterSize(mascotConfig.character);
+  const bubbleStyle = {
+    "--mascot-scale": mascotConfig.scale,
+    "--main-button-size": `${Math.round(size.button * mascotConfig.scale)}px`,
+    "--bubble-anchor-size": `${Math.round(size.anchor * mascotConfig.scale)}px`,
+  } as React.CSSProperties;
 
   const handleContextMenu = (event: React.MouseEvent<HTMLElement>) => {
     event.preventDefault();
     onContextMenu();
-  };
-
-  const clearDragTimer = () => {
-    if (dragTimerRef.current !== null) {
-      window.clearTimeout(dragTimerRef.current);
-      dragTimerRef.current = null;
-    }
-  };
-
-  const handlePointerDown = (event: React.PointerEvent<HTMLButtonElement>) => {
-    if (event.button !== 0 || loading) return;
-    clearDragTimer();
-    suppressClickRef.current = false;
-    dragTimerRef.current = window.setTimeout(() => {
-      dragTimerRef.current = null;
-      suppressClickRef.current = true;
-      if (isTauri()) {
-        void getCurrentWindow().startDragging().catch(() => {
-          suppressClickRef.current = false;
-        });
-      }
-    }, 360);
-  };
-
-  const handlePointerEnd = () => {
-    clearDragTimer();
-  };
-
-  const handleToggleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    if (suppressClickRef.current) {
-      event.preventDefault();
-      event.stopPropagation();
-      window.setTimeout(() => {
-        suppressClickRef.current = false;
-      }, 80);
-      return;
-    }
-    onToggle();
   };
 
   const handleControlClick = (event: React.MouseEvent<HTMLButtonElement>, action: () => void) => {
@@ -214,16 +249,12 @@ export const FloatingButton: React.FC<FloatingButtonProps> = ({
   };
 
   return (
-    <div className="bubble-anchor">
+    <div className={anchorClassName} style={bubbleStyle}>
       <button
         type="button"
         className={buttonClassName}
-        onClick={handleToggleClick}
+        onClick={onToggle}
         onContextMenu={handleContextMenu}
-        onPointerDown={handlePointerDown}
-        onPointerUp={handlePointerEnd}
-        onPointerCancel={handlePointerEnd}
-        onPointerLeave={handlePointerEnd}
         title={buttonTitle}
         aria-label={buttonLabel}
         disabled={loading}
@@ -242,6 +273,17 @@ export const FloatingButton: React.FC<FloatingButtonProps> = ({
         disabled={visualContextLoading}
       >
         <FrameIcon />
+      </button>
+
+      <button
+        type="button"
+        className="bubble-control bubble-duplicate"
+        onClick={(event) => handleControlClick(event, () => { void onDuplicateAssistant(); })}
+        onContextMenu={handleContextMenu}
+        title="Duplicar assistente em outra bolha"
+        aria-label="Duplicar assistente"
+      >
+        <DuplicateIcon />
       </button>
 
       <button
@@ -269,6 +311,17 @@ export const FloatingButton: React.FC<FloatingButtonProps> = ({
 
       <button
         type="button"
+        className="bubble-control bubble-dict"
+        onClick={(event) => handleControlClick(event, onOpenDictionary)}
+        onContextMenu={handleContextMenu}
+        title="Adicionar palavras ao dicionário"
+        aria-label="Adicionar palavras ao dicionário"
+      >
+        <DictionaryIcon />
+      </button>
+
+      <button
+        type="button"
         className={`bubble-control bubble-info ${statusOpen ? "active" : ""}`}
         onClick={(event) => handleControlClick(event, onOpenStatus)}
         onContextMenu={handleContextMenu}
@@ -290,16 +343,6 @@ export const FloatingButton: React.FC<FloatingButtonProps> = ({
           <HistoryIcon />
         </button>
       )}
-
-      <div
-        className="bubble-control bubble-grip"
-        data-tauri-drag-region
-        title="Arrastar bolha"
-        aria-label="Arrastar bolha"
-        role="button"
-      >
-        <GripIcon />
-      </div>
 
       <button
         type="button"

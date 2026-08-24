@@ -17,6 +17,7 @@ interface MiniPanelProps {
   onProcess: () => void;
   onClose: () => void;
   onOpenPromptStudio: () => void;
+  onOpenMascotLab: () => void;
   engine: "web_speech" | "gemini";
   onEngineChange: (e: "web_speech" | "gemini") => void;
   autostartEnabled: boolean;
@@ -41,6 +42,7 @@ export const MiniPanel: React.FC<MiniPanelProps> = ({
   onProcess,
   onClose,
   onOpenPromptStudio,
+  onOpenMascotLab,
   engine,
   onEngineChange,
   autostartEnabled,
@@ -99,6 +101,13 @@ export const MiniPanel: React.FC<MiniPanelProps> = ({
               title="Editar dicionário de correções"
             >
               📖 Dict
+            </button>
+            <button
+              className="panel-studio-btn"
+              onClick={onOpenMascotLab}
+              title="Abrir laboratório do mascote"
+            >
+              Orb
             </button>
             <button
               className="panel-studio-btn"
